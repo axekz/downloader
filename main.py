@@ -17,6 +17,7 @@ from core.detect import detect_csgo_path
 logger.remove()  # Remove the default logger
 logger.add(sys.stderr, format="{time:HH:mm:ss} | {level} | {message}", colorize=True, level="INFO")
 
+
 def format_size(size):
     """格式化文件大小，根据大小自动使用MB或GB"""
     if size >= 1024 * 1024 * 1024:
@@ -24,25 +25,34 @@ def format_size(size):
     else:
         return f"{size / (1024 * 1024):.2f} MB"
 
+
 def format_datetime(dt_str):
     """格式化日期时间字符串"""
     dt = datetime.fromisoformat(dt_str.replace('Z', '+00:00'))
     return f"{dt.year}年{dt.month}月{dt.day}日 {dt.hour:02d}:{dt.minute:02d}"
 
+
+def pad_filename(filename, length=15):
+    """在文件名后面添加空格，使其达到指定长度"""
+    return filename + ' ' * (length - len(filename))
+
+
 def display_menu(file_info):
     headers = ["编号", "文件名", "大小", "修改日期"]
     table = []
     for i, info in enumerate(file_info):
-        file_name = info['name'].rsplit('.', 1)[0]
+        file_name = pad_filename(info['name'].rsplit('.', 1)[0])
         size = format_size(info['size'])
         modified = format_datetime(info['modified'])
         table.append([i + 1, file_name, size, modified])
     logger.info("\n" + tabulate(table, headers=headers, tablefmt="grid"))
     time.sleep(0.02)
 
+
 def signal_handler(sig, frame):
     logger.info('\n退出')
     sys.exit(0)
+
 
 def main():
     signal.signal(signal.SIGINT, signal_handler)
