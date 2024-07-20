@@ -1,4 +1,5 @@
 import os
+from . import logger
 
 CONFIG_FILE = 'config.cfg'
 
